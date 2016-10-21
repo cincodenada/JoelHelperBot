@@ -12,6 +12,12 @@ bases:
     height: 593
     thumbwidth: 349
     thumbheight: 203
+    offset:
+      - 0
+      - -7
+    scale:
+      - 1.03
+      - 1.03
 
 areas:
   full:

@@ -74,9 +74,9 @@ for curmap in mg.maps():
         icoords = (int(p) for p in area['points'].split(' '))
         coords = list(zip(icoords, icoords))
         adj_coords = []
-        for (x,y) in coords:
-            adj_coords.append(x*scale[0]*1.03)
-            adj_coords.append((y*scale[1]-7)*1.03)
+        for pair in coords:
+            for xy in range(2):
+                adj_coords.append((pair[xy]*scale[xy]+base['offset'][xy])*base['scale'][xy])
 
         outfile.write('<area href="//en.wikipedia.org/wiki/United_States_presidential_election_in_{},_2016" shape="{}" coords="{}">\n'.format(
             state,
