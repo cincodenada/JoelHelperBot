@@ -1,6 +1,7 @@
 from Wikipedia import wikipedia
 import yaml
 from collections import OrderedDict
+import os.path
 
 # Lifted from http://stackoverflow.com/a/21912744/306323
 def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
@@ -16,34 +17,35 @@ def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
 
 meta = ordered_load(open('election_meta.yaml','r'))
 
-wikipedia.set_lang('commons')
-
 class MapGetter:
     def __init__(self, fake):
         self.fake = fake
 
-    def get_maps(self):
+    def get_years(self):
         print("Getting list of maps...")
         if(self.fake):
-            yield "File:ElectoralCollege2016.svg"
+            yield 2012
             return
 
-        map_page = wikipedia.page('Template:US_presidential_election_maps_SVG')
-        # Not sure why I get all here, but whatevs
-        for l in map_page.nslinks('File'):
-            if l.startswith('File:'):
-                yield l
+        yield 1789
+        for y in range(1792,2020,4):
+            yield y
 
     def maps(self):
-        for m in self.get_maps():
+        for y in self.get_years():
+            info = {
+                'year': '{}',
+                'file': "File:ElectoralCollege{}.svg",
+                'template': "Template:United_States_presidential_election,_{}_imagemap",
+            }
+            info = {k: v.format(y) for k, v in info.items()}
             if(self.fake):
-                yield {
-                    'file': m,
-                    'thumb': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/ElectoralCollege2016.svg/349px-ElectoralCollege2016.svg.png',
-                }
+                info['thumb'] = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/ElectoralCollege2012.svg/348px-ElectoralCollege2012.svg.png'
             else:
-                print("Getting {}...".format(curmap))
-                curmap_page = wikipedia.page(curmap)
+                print("Getting {}...".format(info['file']))
+
+                wikipedia.set_lang('commons')
+                curmap_page = wikipedia.page(info['file'])
                 print("Getting thumbnail")
                 thumbs = curmap_page.query({
                     'prop': 'imageinfo',
@@ -51,16 +53,10 @@ class MapGetter:
                     'iiurlwidth': base['thumbwidth'],
                 })
                 thumb = next(thumbs)
-                yield {
-                    'file': m,
-                    'thumb': thumb['thumburl']
-                }
-
+                info['thumb'] = thumb['thumburl']
+            yield info
 
 mg = MapGetter(True)
-map_list = mg.get_maps()
-
-outfile = open('test.html','w')
 for curmap in mg.maps():
     base = meta['bases']['full']
     # Should be the same, but since we have them...
@@ -69,6 +65,16 @@ for curmap in mg.maps():
         base['thumbheight']/base['height']
     )
 
+    filename = curmap['file'] + '.html'
+    origfile = os.path.join('orig', filename)
+    if not os.path.isfile(origfile):
+        orig = open(origfile,'w')
+        wikipedia.set_lang('en')
+        orig.write(wikipedia.page(curmap['template']).html())
+        orig.close()
+
+    outfile = open(os.path.join('gen', filename),'w')
+    outfile.write('<base href="http://en.wikipedia.org">\n')
     outfile.write('<map id="{0}" name="{0}">\n'.format(curmap['file']))
     for (state, area) in meta['areas']['full'].items():
         icoords = (int(p) for p in area['points'].split(' '))
@@ -78,8 +84,9 @@ for curmap in mg.maps():
             for xy in range(2):
                 adj_coords.append((pair[xy]*scale[xy]+base['offset'][xy])*base['scale'][xy])
 
-        outfile.write('<area href="//en.wikipedia.org/wiki/United_States_presidential_election_in_{},_2016" shape="{}" coords="{}">\n'.format(
+        outfile.write('<area href="/wiki/United_States_presidential_election_in_{},_{}" shape="{}" coords="{}">\n'.format(
             state,
+            curmap['year'],
             area['shape'],
             ','.join([str(round(c)) for c in adj_coords])
         ))
