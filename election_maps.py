@@ -63,14 +63,26 @@ map_list = mg.get_maps()
 outfile = open('test.html','w')
 for curmap in mg.maps():
     base = meta['bases']['full']
-    scale = base['thumbwidth']/base['width']
+    # Should be the same, but since we have them...
+    scale = (
+        base['thumbwidth']/base['width'],
+        base['thumbheight']/base['height']
+    )
 
     outfile.write('<map id="{0}" name="{0}">\n'.format(curmap['file']))
     for (state, area) in meta['areas']['full'].items():
-       outfile.write('<area href="//en.wikipedia.org/wiki/United_States_presidential_election_in_{},_2016" shape="{}" coords="{}">\n'.format(
-           state,
-           area['shape'],
-           ','.join([str(round(int(p)*scale)) for p in area['points'].split(' ')])
+        icoords = (int(p) for p in area['points'].split(' '))
+        coords = list(zip(icoords, icoords))
+        adj_coords = []
+        for (x,y) in coords:
+            adj_coords.append(x*scale[0]*1.03)
+            adj_coords.append((y*scale[1]-7)*1.03)
+
+        outfile.write('<area href="//en.wikipedia.org/wiki/United_States_presidential_election_in_{},_2016" shape="{}" coords="{}">\n'.format(
+            state,
+            area['shape'],
+            ','.join([str(round(c)) for c in adj_coords])
+        ))
     outfile.write('</map>\n')
     outfile.write('<img src="{}" usemap="#{}" width="349" height="203" />\n'.format(
         curmap['thumb'],
