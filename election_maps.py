@@ -1,7 +1,20 @@
 from Wikipedia import wikipedia
 import yaml
+from collections import OrderedDict
 
-meta = yaml.load(open('election_meta.yaml','r'))
+# Lifted from http://stackoverflow.com/a/21912744/306323
+def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
+    class OrderedLoader(Loader):
+        pass
+    def construct_mapping(loader, node):
+        loader.flatten_mapping(node)
+        return object_pairs_hook(loader.construct_pairs(node))
+    OrderedLoader.add_constructor(
+        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+        construct_mapping)
+    return yaml.load(stream, OrderedLoader)
+
+meta = ordered_load(open('election_meta.yaml','r'))
 
 wikipedia.set_lang('commons')
 
