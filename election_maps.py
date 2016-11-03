@@ -18,12 +18,15 @@ def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
 meta = ordered_load(open('election_meta.yaml','r'))
 
 class MapGetter:
-    def __init__(self, fake):
+    def __init__(self, basedata, fake):
+        self.basedata = basedata
         self.fake = fake
 
     def get_years(self):
         print("Getting list of maps...")
         if(self.fake):
+            yield 2004
+            yield 2008
             yield 2012
             return
 
@@ -32,15 +35,26 @@ class MapGetter:
             yield y
 
     def maps(self):
+        cache = None
+        try:
+            cache = yaml.load(open('orig/metadata.yaml'))
+        except IOError:
+            pass
+        if cache is None:
+            cache = {}
+
         for y in self.get_years():
+            # TODO: Filter by year
+            base = self.basedata['full']
             info = {
                 'year': '{}',
                 'file': "File:ElectoralCollege{}.svg",
                 'template': "Template:United_States_presidential_election,_{}_imagemap",
             }
             info = {k: v.format(y) for k, v in info.items()}
-            if(self.fake):
-                info['thumb'] = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/ElectoralCollege2012.svg/348px-ElectoralCollege2012.svg.png'
+            if(y in cache):
+                print("Loading {} from cache...".format(y))
+                cacheinfo = cache[y]
             else:
                 print("Getting {}...".format(info['file']))
 
@@ -53,10 +67,15 @@ class MapGetter:
                     'iiurlwidth': base['thumbwidth'],
                 })
                 thumb = next(thumbs)
-                info['thumb'] = thumb['thumburl']
+                cacheinfo = {
+                    'thumb': str(thumb['thumburl']),
+                }
+                cache[y] = cacheinfo
+                yaml.dump(cache, open('orig/metadata.yaml','w'), default_flow_style=False)
+            info.update(cacheinfo)
             yield info
 
-mg = MapGetter(True)
+mg = MapGetter(meta['bases'], True)
 for curmap in mg.maps():
     base = meta['bases']['full']
     # Should be the same, but since we have them...
