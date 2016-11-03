@@ -106,11 +106,14 @@ for curmap in mg.maps():
             for xy in range(2):
                 adj_coords.append((pair[xy]*scale[xy]+base['offset'][xy])*base['scale'][xy])
 
-        outfile.write('<area href="/wiki/United_States_presidential_election_in_{},_{}" shape="{}" coords="{}">\n'.format(
-            state,
-            curmap['year'],
+        description = "United States presidential election in {}, {}".format(state, curmap['year'])
+        outfile.write(
+            '<area href="/wiki/{}" shape="{}" coords="{}" alt="{}" title="{}" />\n'.format(
+            description.replace(' ','_'),
             area['shape'],
-            ','.join([str(round(c)) for c in adj_coords])
+            ','.join([str(round(c)) for c in adj_coords]),
+            description,
+            description
         ))
     outfile.write('</map>\n')
     outfile.write('<img src="{}" usemap="#{}" width="{}" height="{}" />\n'.format(
