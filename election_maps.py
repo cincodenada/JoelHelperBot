@@ -44,19 +44,36 @@ class MapGetter:
             cache = {}
 
         for y in self.get_years():
-            # TODO: Filter by year
-            base = self.basedata['full']
             info = {
                 'year': '{}',
                 'file': "File:ElectoralCollege{}.svg",
                 'template': "Template:United_States_presidential_election,_{}_imagemap",
             }
             info = {k: v.format(y) for k, v in info.items()}
+            info['filename'] = info['file'] + '.html'
             if(y in cache):
                 print("Loading {} from cache...".format(y))
                 cacheinfo = cache[y]
+                html = open(origfile, 'r').read()
             else:
                 print("Getting {}...".format(info['file']))
+
+                origfile = os.path.join('orig', info['filename'])
+                if(os.path.isfile(origfile):
+                    info['html'] = open(origfile,'r').read()
+                else:
+                    orig = open(origfile,'w')
+                    wikipedia.set_lang('en')
+                    try:
+                        print("Downloading {}...".format(info['template']))
+                        info['html'] = wikipedia.page(info['template']).html()
+                        orig.write(info['html'])
+                    except wikipedia.PageError:
+                        info['html'] = None
+                        orig.write('<!-- Page not found! -->')
+                    orig.close()
+
+                sizes = getSize(html=html)
 
                 wikipedia.set_lang('commons')
                 curmap_page = wikipedia.page(info['file'])
@@ -64,7 +81,7 @@ class MapGetter:
                 thumbs = curmap_page.query({
                     'prop': 'imageinfo',
                     'iiprop': 'url',
-                    'iiurlwidth': base['thumbwidth'],
+                    'iiurlwidth': sizes['thumbwidth'],
                 })
                 thumb = next(thumbs)
                 cacheinfo = {
@@ -75,34 +92,24 @@ class MapGetter:
             info.update(cacheinfo)
             yield info
 
+    def getSize(self, base = 'full', html = None):
+        #TODO: Take a year instead of explicit base
+        sizes = basedata[base]
+        if(html):
+            soup = BeautifulSoup(html, 'html.parser')
+            map_img = soup.find('img')
+            if(map_img):
+                sizes['width'] = int(map_img['data-file-width'])
+                sizes['height'] = int(map_img['data-file-height'])
+                sizes['thumbwidth'] = int(map_img['width'])
+                sizes['thumbheight'] = int(map_img['height'])
+        return sizes
+
+
+
 mg = MapGetter(meta['bases'])
 for curmap in mg.maps():
     base = meta['bases']['full']
-
-    filename = curmap['file'] + '.html'
-    origfile = os.path.join('orig', filename)
-    if os.path.isfile(origfile):
-        html = open(origfile, 'r').read()
-    else:
-        orig = open(origfile,'w')
-        wikipedia.set_lang('en')
-        try:
-            print("Downloading {}...".format(curmap['template']))
-            html = wikipedia.page(curmap['template']).html()
-            orig.write(html)
-        except wikipedia.PageError:
-            html = None
-            orig.write('<!-- Page not found! -->')
-        orig.close()
-
-    if(html):
-        soup = BeautifulSoup(html, 'html.parser')
-        map_img = soup.find('img')
-        if(map_img):
-            base['width'] = int(map_img['data-file-width'])
-            base['height'] = int(map_img['data-file-height'])
-            base['thumbwidth'] = int(map_img['width'])
-            base['thumbheight'] = int(map_img['height'])
 
     # Calculate scale the same way the ImageMap plugin does
     scale = (base['thumbwidth']+base['thumbheight'])/(base['width']+base['height'])
