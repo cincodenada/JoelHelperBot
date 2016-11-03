@@ -18,16 +18,15 @@ def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
 meta = ordered_load(open('election_meta.yaml','r'))
 
 class MapGetter:
-    def __init__(self, basedata, fake):
+    def __init__(self, basedata, years = None):
         self.basedata = basedata
-        self.fake = fake
+        self.years = years
 
     def get_years(self):
         print("Getting list of maps...")
-        if(self.fake):
-            yield 2004
-            yield 2008
-            yield 2012
+        if(self.years):
+            for y in years:
+                yield y
             return
 
         yield 1789
@@ -75,7 +74,7 @@ class MapGetter:
             info.update(cacheinfo)
             yield info
 
-mg = MapGetter(meta['bases'], True)
+mg = MapGetter(meta['bases'])
 for curmap in mg.maps():
     base = meta['bases']['full']
     # Should be the same, but since we have them...
