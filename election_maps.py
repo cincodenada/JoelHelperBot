@@ -110,7 +110,7 @@ for curmap in mg.maps():
     outfile = open(os.path.join('gen', filename),'w')
     outfile.write('<base href="http://en.wikipedia.org">\n')
     outfile.write('<map id="{0}" name="{0}">\n'.format(curmap['file']))
-    for (state, area) in meta['areas']['full'].items():
+    for area in meta['areas']['full']:
         icoords = (int(p) for p in area['points'].split(' '))
         coords = list(zip(icoords, icoords))
         adj_coords = []
@@ -118,7 +118,7 @@ for curmap in mg.maps():
             for xy in range(2):
                 adj_coords.append((pair[xy]*scale+base['offset'][xy])*base['scale'][xy])
 
-        description = "United States presidential election in {}, {}".format(state, curmap['year'])
+        description = "United States presidential election in {}, {}".format(area['state'], curmap['year'])
         outfile.write(
             '<area href="/wiki/{}" shape="{}" coords="{}" alt="{}" title="{}" />\n'.format(
             description.replace(' ','_'),
