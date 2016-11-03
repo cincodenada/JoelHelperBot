@@ -78,11 +78,6 @@ class MapGetter:
 mg = MapGetter(meta['bases'])
 for curmap in mg.maps():
     base = meta['bases']['full']
-    # Should be the same, but since we have them...
-    scale = (
-        base['thumbwidth']/base['width'],
-        base['thumbheight']/base['height']
-    )
 
     filename = curmap['file'] + '.html'
     origfile = os.path.join('orig', filename)
@@ -109,6 +104,9 @@ for curmap in mg.maps():
             base['thumbwidth'] = int(map_img['width'])
             base['thumbheight'] = int(map_img['height'])
 
+    # Calculate scale the same way the ImageMap plugin does
+    scale = (base['thumbwidth']+base['thumbheight'])/(base['width']+base['height'])
+
     outfile = open(os.path.join('gen', filename),'w')
     outfile.write('<base href="http://en.wikipedia.org">\n')
     outfile.write('<map id="{0}" name="{0}">\n'.format(curmap['file']))
@@ -118,7 +116,7 @@ for curmap in mg.maps():
         adj_coords = []
         for pair in coords:
             for xy in range(2):
-                adj_coords.append((pair[xy]*scale[0]+base['offset'][xy])*base['scale'][xy])
+                adj_coords.append((pair[xy]*scale+base['offset'][xy])*base['scale'][xy])
 
         description = "United States presidential election in {}, {}".format(state, curmap['year'])
         outfile.write(
