@@ -16,6 +16,8 @@ def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
         construct_mapping)
     return yaml.load(stream, OrderedLoader)
 
+yaml.Dumper.ignore_aliases = lambda *args : True
+
 meta = ordered_load(open('election_meta.yaml','r'))
 
 class MapGetter:
@@ -51,15 +53,18 @@ class MapGetter:
             }
             info = {k: v.format(y) for k, v in info.items()}
             info['filename'] = info['file'] + '.html'
+            origfile = os.path.join('orig', info['filename'])
+
             if(y in cache):
                 print("Loading {} from cache...".format(y))
                 cacheinfo = cache[y]
-                html = open(origfile, 'r').read()
+                info['html'] = open(origfile, 'r').read()
             else:
                 print("Getting {}...".format(info['file']))
 
-                origfile = os.path.join('orig', info['filename'])
-                if(os.path.isfile(origfile):
+                cacheinfo = {}
+
+                if(os.path.isfile(origfile)):
                     info['html'] = open(origfile,'r').read()
                 else:
                     orig = open(origfile,'w')
@@ -73,7 +78,7 @@ class MapGetter:
                         orig.write('<!-- Page not found! -->')
                     orig.close()
 
-                sizes = getSize(html=html)
+                cacheinfo['sizes'] = self.get_size(html=info['html'])
 
                 wikipedia.set_lang('commons')
                 curmap_page = wikipedia.page(info['file'])
@@ -81,20 +86,18 @@ class MapGetter:
                 thumbs = curmap_page.query({
                     'prop': 'imageinfo',
                     'iiprop': 'url',
-                    'iiurlwidth': sizes['thumbwidth'],
+                    'iiurlwidth': cacheinfo['sizes']['thumbwidth'],
                 })
                 thumb = next(thumbs)
-                cacheinfo = {
-                    'thumb': str(thumb['thumburl']),
-                }
+                cacheinfo['thumb'] = str(thumb['thumburl'])
                 cache[y] = cacheinfo
                 yaml.dump(cache, open('orig/metadata.yaml','w'), default_flow_style=False)
             info.update(cacheinfo)
             yield info
 
-    def getSize(self, base = 'full', html = None):
+    def get_size(self, base = 'full', html = None):
         #TODO: Take a year instead of explicit base
-        sizes = basedata[base]
+        sizes = {k:v for k,v in self.basedata[base].items() if k in ['width','height','thumbwidth','thumbheight']}
         if(html):
             soup = BeautifulSoup(html, 'html.parser')
             map_img = soup.find('img')
@@ -112,15 +115,15 @@ for curmap in mg.maps():
     base = meta['bases']['full']
 
     # Calculate scale the same way the ImageMap plugin does
-    scale = (base['thumbwidth']+base['thumbheight'])/(base['width']+base['height'])
+    scale = (curmap['sizes']['thumbwidth']+curmap['sizes']['thumbheight'])/(curmap['sizes']['width']+curmap['sizes']['height'])
 
-    outfile = open(os.path.join('gen', filename),'w')
+    outfile = open(os.path.join('gen', curmap['filename']),'w')
     outfile.write('<base href="http://en.wikipedia.org">\n')
     outfile.write("""<div class="center">
 <div class="floatnone">
 <div class="noresize" style="height: {}px; width: {}px;">
 """.format(
-        base['thumbheight'], base['thumbwidth']
+        curmap['sizes']['thumbheight'], curmap['sizes']['thumbwidth']
     ))
     outfile.write('<map id="{0}" name="{0}">\n'.format(curmap['file']))
     for area in meta['areas']['full']:
@@ -144,10 +147,10 @@ for curmap in mg.maps():
     outfile.write('<img alt="{}" src="{}" width="{}" height="{}" data-file-width="{}" data-file-height="{}" usemap="#{}"/>\n'.format(
         curmap['file'].replace('File:',''),
         curmap['thumb'].replace('https:',''),
-        base['thumbwidth'],
-        base['thumbheight'],
-        base['width'],
-        base['height'],
+        curmap['sizes']['thumbwidth'],
+        curmap['sizes']['thumbheight'],
+        curmap['sizes']['width'],
+        curmap['sizes']['height'],
         curmap['file']
     ))
     outfile.write("""<div style="margin-left: {}px; margin-top: -20px; text-align: left;">
@@ -158,5 +161,5 @@ for curmap in mg.maps():
 </div>
 </div>
 </div>
-""".format(base['thumbwidth']-20, curmap['file']))
+""".format(curmap['sizes']['thumbwidth']-20, curmap['file']))
     outfile.close()
