@@ -123,6 +123,19 @@ for curmap in mg.maps(range(1848,2020,4)):
     scale = (curmap['sizes']['thumbwidth']+curmap['sizes']['thumbheight'])/(curmap['sizes']['width']+curmap['sizes']['height'])
     base = meta['bases'][curmap['base']]
 
+    outsvg = open(os.path.join('svg', curmap['filename'].replace('.html','')),'w')
+    outsvg.write("""<svg xmlns="http://www.w3.org/2000/svg" width="{0}px" height="{1}px" viewBox="0 0 {0} {1}">
+<style>
+    /* <![CDATA[ */
+    rect, polygon {{
+      fill: none;
+      stroke: black;
+      stroke-width: 1px;
+    }}
+    /* ]]> */
+</style>
+""".format(curmap['sizes']['width'], curmap['sizes']['height']))
+
     outfile = open(os.path.join('gen', curmap['filename']),'w')
     outfile.write('<base href="http://en.wikipedia.org">\n')
     outfile.write("""<div class="center">
@@ -146,18 +159,34 @@ for curmap in mg.maps(range(1848,2020,4)):
         coords = list(zip(icoords, icoords))
         adj_coords = []
         for pair in coords:
+            adj_pair = []
             for xy in range(2):
-                adj_coords.append((pair[xy]*scale+base['offset'][xy])*base['scale'][xy])
+                adj_pair.append((pair[xy]*scale+base['offset'][xy])*base['scale'][xy])
+            adj_coords.append(adj_pair)
 
         description = "United States presidential election in {}, {}".format(area['label'], curmap['year'])
         outfile.write(
             '<area href="/wiki/{}" shape="{}" coords="{}" alt="{}" title="{}" />\n'.format(
             description.replace(' ','_'),
             area['shape'],
-            ','.join([str(round(c)) for c in adj_coords]),
+            ','.join([str(round(c)) for p in adj_coords for c in p]),
             description,
             description
         ))
+
+        if(area['shape'] == 'rect'):
+            outsvg.write('<rect width="{}" height="{}" x="{}" y="{}">\n'.format(
+                adj_coords[1][0] - adj_coords[0][0],
+                adj_coords[1][1] - adj_coords[0][1],
+                adj_coords[0][0],
+                adj_coords[0][1]
+            ))
+        elif(area['shape'] == 'poly'):
+            points = ' '.join(','.join([str(p) for p in pair]) for pair in adj_coords)
+            outsvg.write('<polygon points="{}"/>\n'.format(points))
+
+    outsvg.write('</svg>\n')
+
     outfile.write('</map>\n')
     outfile.write('<img alt="{}" src="{}" width="{}" height="{}" data-file-width="{}" data-file-height="{}" usemap="#{}"/>\n'.format(
         curmap['file'].replace('File:',''),
