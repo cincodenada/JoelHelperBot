@@ -21,13 +21,13 @@ yaml.Dumper.ignore_aliases = lambda *args : True
 meta = ordered_load(open('election_meta.yaml','r'))
 
 class MapGetter:
-    def __init__(self, basedata, years = None):
+    def __init__(self, basedata, default_size):
         self.basedata = basedata
-        self.years = years
+        self.default_size = default_size
 
-    def get_years(self):
+    def get_years(self, years):
         print("Getting list of maps...")
-        if(self.years):
+        if(years):
             for y in years:
                 yield y
             return
@@ -36,7 +36,7 @@ class MapGetter:
         for y in range(1792,2020,4):
             yield y
 
-    def maps(self):
+    def maps(self, years):
         cache = None
         try:
             cache = yaml.load(open('orig/metadata.yaml'))
@@ -45,7 +45,7 @@ class MapGetter:
         if cache is None:
             cache = {}
 
-        for y in self.get_years():
+        for y in self.get_years(years):
             info = {
                 'year': '{}',
                 'file': "File:ElectoralCollege{}.svg",
@@ -53,6 +53,8 @@ class MapGetter:
             }
             info = {k: v.format(y) for k, v in info.items()}
             info['filename'] = info['file'] + '.html'
+            info['base'] = self.get_base(y)
+
             origfile = os.path.join('orig', info['filename'])
 
             if(y in cache):
@@ -78,7 +80,7 @@ class MapGetter:
                         orig.write('<!-- Page not found! -->')
                     orig.close()
 
-                cacheinfo['sizes'] = self.get_size(html=info['html'])
+                cacheinfo['sizes'] = self.get_size(info['html'])
 
                 wikipedia.set_lang('commons')
                 curmap_page = wikipedia.page(info['file'])
@@ -95,9 +97,14 @@ class MapGetter:
             info.update(cacheinfo)
             yield info
 
-    def get_size(self, base = 'full', html = None):
-        #TODO: Take a year instead of explicit base
-        sizes = {k:v for k,v in self.basedata[base].items() if k in ['width','height','thumbwidth','thumbheight']}
+    def get_base(self, year):
+        for key, b in self.basedata.items():
+            if(b['start'] <= year and ('end' not in b or b['end'] >= year)):
+                return key
+        return 'current'
+
+    def get_size(self, html = None):
+        sizes = self.default_size
         if(html):
             soup = BeautifulSoup(html, 'html.parser')
             map_img = soup.find('img')
@@ -110,12 +117,11 @@ class MapGetter:
 
 
 
-mg = MapGetter(meta['bases'])
-for curmap in mg.maps():
-    base = meta['bases']['full']
-
+mg = MapGetter(meta['bases'], meta['defaults'])
+for curmap in mg.maps(range(1848,2020,4)):
     # Calculate scale the same way the ImageMap plugin does
     scale = (curmap['sizes']['thumbwidth']+curmap['sizes']['thumbheight'])/(curmap['sizes']['width']+curmap['sizes']['height'])
+    base = meta['bases'][curmap['base']]
 
     outfile = open(os.path.join('gen', curmap['filename']),'w')
     outfile.write('<base href="http://en.wikipedia.org">\n')

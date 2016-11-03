@@ -1,17 +1,40 @@
 ---
+defaults:
+  width: 1020
+  height: 593
+  thumbwidth: 348
+  thumbheight: 202
+
 bases:
   original:
     start: 1789
     end: 1800
+    offset:
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
   territorial_growth:
     start: 1804
     end: 1844
-  full:
+    offset:
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+  preHIAK:
     start: 1848
-    width: 1020
-    height: 593
-    thumbwidth: 348
-    thumbheight: 202
+    end: 1956
+    offset:
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+  current:
+    start: 1960
     offset:
       - 0
       - 0
@@ -24,7 +47,72 @@ bases:
 #     - 1.035
 
 area_sets:
-  full:
+  preHIAK:
+    - Alabama
+    - Arizona
+    - Arkansas
+    - California
+    - Colorado
+    - Connecticut
+
+    - Delaware
+
+    - Florida
+    - Georgia
+    - Idaho
+    - Illinois
+    - Indiana
+    - Iowa
+    - Kansas
+    - Kentucky
+    - Louisiana
+    - Maine
+    - Maryland
+    - Massachusetts
+
+    - Michigan
+    - Minnesota
+    - Mississippi
+    - Missouri
+    - Montana
+    - Nebraska
+    - Nevada
+    - New Hampshire
+    - New Jersey
+
+    - New Mexico
+    - New York
+    - North Carolina
+    - North Dakota
+    - Ohio
+    - Oklahoma
+    - Oregon
+    - Pennsylvania
+    - Rhode Island
+
+    - South Carolina
+    - South Dakota
+    - Tennessee
+    - Texas
+    - Utah
+    - Vermont
+    - Virginia
+    - Washington
+    - West Virginia
+
+    - Wisconsin
+    - Wyoming
+
+    - Delaware (rect)
+    - Maryland (rect)
+    - New Hampshire (rect)
+    - New Jersey (rect)
+    - Massachusetts (rect)
+    - Connecticut (rect)
+    - West Virginia (rect)
+    - Vermont (rect)
+    - Rhode Island (rect)
+  current:
     - Alabama
     - Alaska
     - Arizona
