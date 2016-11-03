@@ -2,6 +2,7 @@ from Wikipedia import wikipedia
 import yaml
 from collections import OrderedDict
 import os.path
+from bs4 import BeautifulSoup
 
 # Lifted from http://stackoverflow.com/a/21912744/306323
 def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
@@ -85,15 +86,28 @@ for curmap in mg.maps():
 
     filename = curmap['file'] + '.html'
     origfile = os.path.join('orig', filename)
-    if not os.path.isfile(origfile):
+    if os.path.isfile(origfile):
+        html = open(origfile, 'r').read()
+    else:
         orig = open(origfile,'w')
         wikipedia.set_lang('en')
         try:
-            orig.write(wikipedia.page(curmap['template']).html())
+            print("Downloading {}...".format(curmap['template']))
+            html = wikipedia.page(curmap['template']).html()
+            orig.write(html)
         except wikipedia.PageError:
+            html = None
             orig.write('<!-- Page not found! -->')
         orig.close()
 
+    if(html):
+        soup = BeautifulSoup(html, 'html.parser')
+        map_img = soup.find('img')
+        if(map_img):
+            base['width'] = int(map_img['data-file-width'])
+            base['height'] = int(map_img['data-file-height'])
+            base['thumbwidth'] = int(map_img['width'])
+            base['thumbheight'] = int(map_img['height'])
 
     outfile = open(os.path.join('gen', filename),'w')
     outfile.write('<base href="http://en.wikipedia.org">\n')
