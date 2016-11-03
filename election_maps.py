@@ -110,8 +110,10 @@ for curmap in mg.maps():
             ','.join([str(round(c)) for c in adj_coords])
         ))
     outfile.write('</map>\n')
-    outfile.write('<img src="{}" usemap="#{}" width="349" height="203" />\n'.format(
+    outfile.write('<img src="{}" usemap="#{}" width="{}" height="{}" />\n'.format(
         curmap['thumb'],
-        curmap['file']
+        curmap['file'],
+        base['thumbwidth'],
+        base['thumbheight']
     ))
     outfile.close()

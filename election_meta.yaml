@@ -10,14 +10,14 @@ bases:
     start: 1848
     width: 1020
     height: 593
-    thumbwidth: 349
-    thumbheight: 203
+    thumbwidth: 348
+    thumbheight: 202
     offset:
       - 0
       - -7
     scale:
       - 1.03
-      - 1.03
+      - 1.035
 
 areas:
   full:
