@@ -27,6 +27,36 @@ bases:
   current:
     start: 1848
     additions:
+      1848:
+        - Wisconsin
+        - Iowa
+      1852:
+        - California
+      1860:
+        - Oregon
+        - Minnesota
+      1864:
+        - Nevada
+        - West Virginia
+        - Kansas
+      1868:
+        - Nebraska
+      1876:
+        - Colorado
+      1892:
+        - Idaho
+        - Wyoming
+        - Washington
+        - North Dakota
+        - South Dakota
+        - Montana
+      1896:
+        - Utah
+      1908:
+        - Oklahoma
+      1912:
+        - Arizona
+        - New Mexico
       1960:
         - Hawaii
         - Alaska
