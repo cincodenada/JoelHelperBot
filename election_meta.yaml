@@ -24,17 +24,12 @@ bases:
     scale:
       - 1
       - 1
-  preHIAK:
-    start: 1848
-    end: 1956
-    offset:
-      - 0
-      - 0
-    scale:
-      - 1
-      - 1
   current:
-    start: 1960
+    start: 1848
+    additions:
+      1960:
+        - Hawaii
+        - Alaska
     offset:
       - 0
       - 0
@@ -47,12 +42,6 @@ bases:
 #     - 1.035
 
 area_sets:
-  preHIAK:
-    remove:
-      keys:
-        - Hawaii
-        - Alaska
-      from: current
   current:
     - Alabama
     - Alaska

@@ -133,12 +133,12 @@ for curmap in mg.maps(range(1848,2020,4)):
     ))
     outfile.write('<map id="{0}" name="{0}">\n'.format(curmap['file']))
 
-    cur_set = meta['area_sets'][curmap['base']]
-    if('remove' in cur_set):
-        spec = cur_set['remove']
-        area_keys = [a for a in meta['area_sets'][spec['from']] if a not in spec['keys']]
-    else:
-        area_keys = cur_set
+    area_keys = list(meta['area_sets'][curmap['base']])
+    if('additions' in base):
+        for firstyear, keys in base['additions'].items():
+            if(int(curmap['year']) < firstyear):
+                for k in keys:
+                    area_keys.remove(k)
 
     for area_key in area_keys:
         area = meta['areas'][area_key]
