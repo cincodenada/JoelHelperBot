@@ -104,7 +104,7 @@ for curmap in mg.maps():
         adj_coords = []
         for pair in coords:
             for xy in range(2):
-                adj_coords.append((pair[xy]*scale[xy]+base['offset'][xy])*base['scale'][xy])
+                adj_coords.append((pair[xy]*scale[0]+base['offset'][xy])*base['scale'][xy])
 
         description = "United States presidential election in {}, {}".format(state, curmap['year'])
         outfile.write(

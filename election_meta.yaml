@@ -14,10 +14,14 @@ bases:
     thumbheight: 202
     offset:
       - 0
-      - -7
+      - 0
+#     - 0
+#     - -7
     scale:
-      - 1.03
-      - 1.035
+      - 1
+      - 1
+#     - 1.03
+#     - 1.035
 
 areas:
   full:
