@@ -109,6 +109,12 @@ for curmap in mg.maps():
 
     outfile = open(os.path.join('gen', filename),'w')
     outfile.write('<base href="http://en.wikipedia.org">\n')
+    outfile.write("""<div class="center">
+<div class="floatnone">
+<div class="noresize" style="height: {}px; width: {}px;">
+""".format(
+        base['thumbheight'], base['thumbwidth']
+    ))
     outfile.write('<map id="{0}" name="{0}">\n'.format(curmap['file']))
     for area in meta['areas']['full']:
         icoords = (int(p) for p in area['points'].split(' '))
@@ -128,10 +134,22 @@ for curmap in mg.maps():
             description
         ))
     outfile.write('</map>\n')
-    outfile.write('<img src="{}" usemap="#{}" width="{}" height="{}" />\n'.format(
-        curmap['thumb'],
-        curmap['file'],
+    outfile.write('<img alt="{}" src="{}" width="{}" height="{}" data-file-width="{}" data-file-height="{}" usemap="#{}"/>\n'.format(
+        curmap['file'].replace('File:',''),
+        curmap['thumb'].replace('https:',''),
         base['thumbwidth'],
-        base['thumbheight']
+        base['thumbheight'],
+        base['width'],
+        base['height'],
+        curmap['file']
     ))
+    outfile.write("""<div style="margin-left: {}px; margin-top: -20px; text-align: left;">
+<a href="/wiki/{}" title="About this image">
+<img alt="About this image" src="/w/extensions/ImageMap/desc-20.png?15600" style="border: none;" />
+</a>
+</div>
+</div>
+</div>
+</div>
+""".format(base['thumbwidth']-20, curmap['file']))
     outfile.close()
