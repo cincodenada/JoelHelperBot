@@ -132,7 +132,15 @@ for curmap in mg.maps(range(1848,2020,4)):
         curmap['sizes']['thumbheight'], curmap['sizes']['thumbwidth']
     ))
     outfile.write('<map id="{0}" name="{0}">\n'.format(curmap['file']))
-    for area_key in meta['area_sets']['full']:
+
+    cur_set = meta['area_sets'][curmap['base']]
+    if('remove' in cur_set):
+        spec = cur_set['remove']
+        area_keys = [a for a in meta['area_sets'][spec['from']] if a not in spec['keys']]
+    else:
+        area_keys = cur_set
+
+    for area_key in area_keys:
         area = meta['areas'][area_key]
         icoords = (int(p) for p in area['points'].split(' '))
         coords = list(zip(icoords, icoords))
