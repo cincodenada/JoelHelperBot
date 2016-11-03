@@ -88,8 +88,12 @@ for curmap in mg.maps():
     if not os.path.isfile(origfile):
         orig = open(origfile,'w')
         wikipedia.set_lang('en')
-        orig.write(wikipedia.page(curmap['template']).html())
+        try:
+            orig.write(wikipedia.page(curmap['template']).html())
+        except wikipedia.PageError:
+            orig.write('<!-- Page not found! -->')
         orig.close()
+
 
     outfile = open(os.path.join('gen', filename),'w')
     outfile.write('<base href="http://en.wikipedia.org">\n')
