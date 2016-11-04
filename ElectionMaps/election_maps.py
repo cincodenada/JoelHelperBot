@@ -192,7 +192,7 @@ for curmap in mg.maps(range(1848,2020,4)):
         for pair in coords:
             adj_pair = []
             for xy in range(2):
-                adj_pair.append((pair[xy]*scale+base['offset'][xy])*base['scale'][xy])
+                adj_pair.append((pair[xy]*base['scale'][xy]+base['offset'][xy]))
             adj_coords.append(adj_pair)
 
         description = "United States presidential election in {}, {}".format(area['label'], curmap['year'])
@@ -202,7 +202,7 @@ for curmap in mg.maps(range(1848,2020,4)):
             '<area href="/wiki/{}" shape="{}" coords="{}" alt="{}" title="{}" />\n'.format(
             description.replace(' ','_'),
             area['shape'],
-            ','.join([str(round(c)) for p in adj_coords for c in p]),
+            ','.join([str(round(c*scale)) for p in adj_coords for c in p]),
             description,
             description
         ))
@@ -212,19 +212,19 @@ for curmap in mg.maps(range(1848,2020,4)):
         if(area['shape'] == 'rect'):
             outsvg.write('<rect id="{}" width="{}" height="{}" x="{}" y="{}"/>\n'.format(
                 svg_id,
-                coords[1][0] - coords[0][0],
-                coords[1][1] - coords[0][1],
-                coords[0][0],
-                coords[0][1]
+                adj_coords[1][0] - adj_coords[0][0],
+                adj_coords[1][1] - adj_coords[0][1],
+                adj_coords[0][0],
+                adj_coords[0][1]
             ))
         elif(area['shape'] == 'poly'):
-            points = ' '.join(','.join([str(p) for p in pair]) for pair in coords)
+            points = ' '.join(','.join([str(round(p)) for p in pair]) for pair in adj_coords)
             outsvg.write('<polygon id="{}" points="{}"/>\n'.format(svg_id, points))
 
         # Write wikitext
         outwiki.write('{} {} [[{}]]\n'.format(
             area['shape'],
-            ' '.join(' '.join([str(p) for p in pair]) for pair in coords),
+            ' '.join(' '.join([str(round(p)) for p in pair]) for pair in adj_coords),
             description
         ))
 
