@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../')
+
 from Wikipedia import wikipedia
 import yaml
 from collections import OrderedDict
