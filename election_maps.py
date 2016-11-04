@@ -3,6 +3,7 @@ import yaml
 from collections import OrderedDict
 import os.path
 from bs4 import BeautifulSoup
+import re
 
 # Lifted from http://stackoverflow.com/a/21912744/306323
 def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
@@ -116,7 +117,6 @@ class MapGetter:
         return sizes
 
 
-
 mg = MapGetter(meta['bases'], meta['defaults'])
 for curmap in mg.maps(range(1848,2020,4)):
     # Calculate scale the same way the ImageMap plugin does
@@ -174,16 +174,18 @@ for curmap in mg.maps(range(1848,2020,4)):
             description
         ))
 
+        svg_id = re.sub(r"\W+","_",area_key)
         if(area['shape'] == 'rect'):
-            outsvg.write('<rect width="{}" height="{}" x="{}" y="{}">\n'.format(
-                adj_coords[1][0] - adj_coords[0][0],
-                adj_coords[1][1] - adj_coords[0][1],
-                adj_coords[0][0],
-                adj_coords[0][1]
+            outsvg.write('<rect id="{}" width="{}" height="{}" x="{}" y="{}"/>\n'.format(
+                svg_id,
+                coords[1][0] - coords[0][0],
+                coords[1][1] - coords[0][1],
+                coords[0][0],
+                coords[0][1]
             ))
         elif(area['shape'] == 'poly'):
-            points = ' '.join(','.join([str(p) for p in pair]) for pair in adj_coords)
-            outsvg.write('<polygon points="{}"/>\n'.format(points))
+            points = ' '.join(','.join([str(p) for p in pair]) for pair in coords)
+            outsvg.write('<polygon id="{}" points="{}"/>\n'.format(svg_id, points))
 
     outsvg.write('</svg>\n')
 
