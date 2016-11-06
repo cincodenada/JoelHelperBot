@@ -281,7 +281,7 @@ for curmap in mg.maps(args.start, args.end):
 
                 outpage.text = outwiki.getvalue()
                 outpage.save(
-                    summary = '{} (semi-automated by JoelHelperBot)'.format(args.edit_note),
+                    summary = '{} (semi-automated)'.format(args.edit_note),
                     watch = 'watch',
                     minor = False,
                     botflag = True
