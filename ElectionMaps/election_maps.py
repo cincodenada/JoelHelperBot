@@ -275,8 +275,12 @@ for curmap in mg.maps(args.start, args.end):
             print("Woulda submitted edit for {} with note {}".format(curmap['file'], args.edit_note))
         else:
             outpage = pywiki.Page(enwiki, curmap['template'])
-            if(outpage.botMayEdit() and outpage.canBeEdited()):
-                print("Submitting edit for {}".format(curmap['template']))
+            if(not outpage.exists() or (outpage.botMayEdit() and outpage.canBeEdited())):
+                if(outpage.exists()):
+                    print("Submitting edit for {}".format(curmap['template']))
+                else:
+                    print("Creating {}".format(curmap['template']))
+
                 outpage.text = outwiki.getvalue()
                 outpage.save(
                     summary = '{} (semi-automated by JoelHelperBot)'.format(args.edit_note),
