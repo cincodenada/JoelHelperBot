@@ -33,18 +33,13 @@ class MapGetter:
         self.basedata = basedata
         self.default_size = default_size
 
-    def get_years(self, years):
+    def get_years(self):
         print("Getting list of maps...")
-        if(years):
-            for y in years:
-                yield y
-            return
-
         yield 1789
         for y in range(1792,2020,4):
             yield y
 
-    def maps(self, years):
+    def maps(self, start, end):
         cache = None
         try:
             cache = yaml.load(open('orig/metadata.yaml'))
@@ -53,7 +48,10 @@ class MapGetter:
         if cache is None:
             cache = {}
 
-        for y in self.get_years(years):
+        for y in self.get_years():
+            if(y < start or y > end):
+                continue
+
             info = {
                 'year': '{}',
                 'file': "File:ElectoralCollege{}.svg",
@@ -126,8 +124,10 @@ class MapGetter:
 
 parser = argparse.ArgumentParser(description="Do some map stuff")
 parser.add_argument('-m', '--edit-note', type=str, help="The edit message to send")
-parser.add_argument('--cache-wiki', type=bool, default=False, help="Whether to cache wikitext. Default false. Do not use for actual edits, lest you get stale pages for comparison!")
-parser.add_argument('--dry-run', type=bool, default=False, help="Do a dry run - don't actually send any edits")
+parser.add_argument('--cache-wiki', action="store_true", help="Cache wikitext. Do not use for actual edits, lest you get stale pages for comparison!")
+parser.add_argument('--dry-run', action="store_true", help="Do a dry run - don't actually send any edits")
+parser.add_argument('--start', type=int, default=1789, help="Year to start on")
+parser.add_argument('--end', type=int, default=datetime.now().year, help="Year to end on")
 args = parser.parse_args()
 
 # Input an edit note interactively if we didn't get one
@@ -136,7 +136,7 @@ while not args.edit_note:
 
 mg = MapGetter(meta['bases'], meta['defaults'])
 enwiki = pywiki.getSite('en')
-for curmap in mg.maps(range(1848,2020,4)):
+for curmap in mg.maps(args.start, args.end):
     # Calculate scale the same way the ImageMap plugin does
     scale = (curmap['sizes']['thumbwidth']+curmap['sizes']['thumbheight'])/(curmap['sizes']['width']+curmap['sizes']['height'])
     base = meta['bases'][curmap['base']]
