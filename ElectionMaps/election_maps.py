@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 import re
 from datetime import datetime
 from io import StringIO
+import argparse
 
 # Lifted from http://stackoverflow.com/a/21912744/306323
 def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
@@ -123,10 +124,15 @@ class MapGetter:
         return sizes
 
 
-# Get an edit note
-editnote = None
-while not editnote:
-    editnote = input('Edit note? ')
+parser = argparse.ArgumentParser(description="Do some map stuff")
+parser.add_argument('-m', '--edit-note', type=str, help="The edit message to send")
+parser.add_argument('--cache-wiki', type=bool, default=False, help="Whether to cache wikitext. Default false. Do not use for actual edits, lest you get stale pages for comparison!")
+parser.add_argument('--dry-run', type=bool, default=False, help="Do a dry run - don't actually send any edits")
+args = parser.parse_args()
+
+# Input an edit note interactively if we didn't get one
+while not args.edit_note:
+    args.edit_note = input('Edit note? ')
 
 mg = MapGetter(meta['bases'], meta['defaults'])
 enwiki = pywiki.getSite('en')
@@ -165,7 +171,7 @@ for curmap in mg.maps(range(1848,2020,4)):
         curmap['sizes']['thumbwidth']
     ))
     origwiki_path = os.path.join('wiki', 'orig', curmap['template'])
-    if(os.path.isfile(origwiki_path)):
+    if(os.path.isfile(origwiki_path) and args.cache_wiki):
         origtext = open(origwiki_path, 'r').read()
     else:
         print("Downloading wikitext for {}...".format(curmap['template']))
@@ -265,15 +271,18 @@ for curmap in mg.maps(range(1848,2020,4)):
     if(skipfirst(origtext) == skipfirst(outwiki.getvalue())):
         print("No changes found, continuing...")
     else:
-        outpage = pywiki.Page(enwiki, curmap['template'])
-        if(outpage.botMayEdit() and outpage.canBeEdited()):
-            print("Submitting edit for {}".format(curmap['template']))
-            outpage.text = outwiki.getvalue()
-            outpage.save(
-                summary = '{} (semi-automated by JoelHelperBot)'.format(editnote),
-                watch = 'watch',
-                minor = False,
-                botflag = True
-            )
+        if(args.dry_run):
+            print("Woulda submitted edit for {} with note {}".format(curmap['file'], args.edit_note))
         else:
-            print("Bot editing disallowed on {}, skipping...".format(curmap['template']))
+            outpage = pywiki.Page(enwiki, curmap['template'])
+            if(outpage.botMayEdit() and outpage.canBeEdited()):
+                print("Submitting edit for {}".format(curmap['template']))
+                outpage.text = outwiki.getvalue()
+                outpage.save(
+                    summary = '{} (semi-automated by JoelHelperBot)'.format(args.edit_note),
+                    watch = 'watch',
+                    minor = False,
+                    botflag = True
+                )
+            else:
+                print("Bot editing disallowed on {}, skipping...".format(curmap['template']))
