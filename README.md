@@ -1,4 +1,4 @@
-#JoelHelperBot
+# JoelHelperBot
 
 This bot was created to create, improve, and maintain English Wikipedia's [US Presidential Election imagemaps](https://en.wikipedia.org/wiki/Category:United_States_presidential_election_imagemaps), which are all very similar, and tedious to do by hand. As of its creation, the maps are only clickable going back to 1876, and the clickable areas are notably misaligned from the states they represent.
 
