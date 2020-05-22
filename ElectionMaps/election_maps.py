@@ -188,7 +188,7 @@ for curmap in mg.maps(args.start, args.end):
                     area_keys.remove(k)
 
     for area_key in area_keys:
-        area = meta['areas'][area_key]
+        area = meta['areas'][curmap['base']][area_key]
 
         # Get/adjust coords
         icoords = (int(p) for p in area['points'].split(' '))
