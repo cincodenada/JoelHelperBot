@@ -42,7 +42,7 @@ class MapGetter:
     def maps(self, start, end):
         cache = None
         try:
-            cache = yaml.load(open('orig/metadata.yaml'))
+            cache = ordered_load(open('orig/metadata.yaml'))
         except IOError:
             pass
         if cache is None:
@@ -55,7 +55,7 @@ class MapGetter:
             info = {
                 'year': '{}',
                 'file': "File:ElectoralCollege{}.svg",
-                'template': "Template:United_States_presidential_election,_{}_imagemap",
+                'template': "Template:{}_United_States_presidential_election_imagemap",
             }
             info = {k: v.format(y) for k, v in info.items()}
             info['filename'] = info['file'] + '.html'
@@ -135,7 +135,7 @@ while not args.edit_note:
     args.edit_note = input('Edit note? ')
 
 mg = MapGetter(meta['bases'], meta['defaults'])
-enwiki = pywiki.getSite('en')
+enwiki = pywiki.Site('en')
 for curmap in mg.maps(args.start, args.end):
     # Calculate scale the same way the ImageMap plugin does
     scale = (curmap['sizes']['thumbwidth']+curmap['sizes']['thumbheight'])/(curmap['sizes']['width']+curmap['sizes']['height'])
@@ -200,7 +200,7 @@ for curmap in mg.maps(args.start, args.end):
                 adj_pair.append((pair[xy]*base['scale'][xy]+base['offset'][xy]))
             adj_coords.append(adj_pair)
 
-        description = "United States presidential election in {}, {}".format(area['label'], curmap['year'])
+        description = "{year} United States presidential election in {label}".format(label=area['label'], year=curmap['year'])
 
         # Write HTML
         outfile.write(
