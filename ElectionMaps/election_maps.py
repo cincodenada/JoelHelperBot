@@ -29,9 +29,8 @@ yaml.Dumper.ignore_aliases = lambda *args : True
 meta = ordered_load(open('election_meta.yaml','r'))
 
 class MapGetter:
-    def __init__(self, basedata, default_size):
+    def __init__(self, basedata):
         self.basedata = basedata
-        self.default_size = default_size
 
     def get_years(self):
         print("Getting list of maps...")
@@ -86,7 +85,7 @@ class MapGetter:
                         orig.write('<!-- Page not found! -->')
                     orig.close()
 
-                cacheinfo['sizes'] = self.get_size(info['html'])
+                cacheinfo['sizes'] = self.get_size(info['base'], info['html'])
 
                 wikipedia.set_lang('commons')
                 curmap_page = wikipedia.page(info['file'])
@@ -109,8 +108,8 @@ class MapGetter:
                 return key
         return 'current'
 
-    def get_size(self, html = None):
-        sizes = self.default_size
+    def get_size(self, base, html = None):
+        sizes = self.basedata[base]['default_size']
         if(html):
             soup = BeautifulSoup(html, 'html.parser')
             map_img = soup.find('img')
@@ -134,7 +133,7 @@ args = parser.parse_args()
 while not args.edit_note:
     args.edit_note = input('Edit note? ')
 
-mg = MapGetter(meta['bases'], meta['defaults'])
+mg = MapGetter(meta['bases'])
 enwiki = pywiki.Site('en')
 for curmap in mg.maps(args.start, args.end):
     # Calculate scale the same way the ImageMap plugin does
@@ -212,7 +211,7 @@ for curmap in mg.maps(args.start, args.end):
             description
         ))
 
-        # Write SVG
+        # Write debug SVG
         svg_id = re.sub(r"\W+","_",area_key)
         if(area['shape'] == 'rect'):
             outsvg.write('<rect id="{}" width="{}" height="{}" x="{}" y="{}"/>\n'.format(

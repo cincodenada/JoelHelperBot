@@ -1,14 +1,14 @@
 ---
-defaults:
-  width: 1020
-  height: 593
-  thumbwidth: 348
-  thumbheight: 202
-
 bases:
   original:
     start: 1789
     end: 1800
+
+    default_size:
+      width: 535
+      height: 437
+      thumbwidth: 300
+      thumbheight: 245
     offset:
       - 0
       - 0
@@ -18,6 +18,12 @@ bases:
   territorial_growth:
     start: 1804
     end: 1844
+
+    default_size:
+      width: 1020
+      height: 593
+      thumbwidth: 348
+      thumbheight: 202
     offset:
       - 0
       - 0
@@ -61,6 +67,12 @@ bases:
       1960:
         - Hawaii
         - Alaska
+
+    default_size:
+      width: 1020
+      height: 593
+      thumbwidth: 348
+      thumbheight: 202
     offset:
       - 0
       - -21.977
