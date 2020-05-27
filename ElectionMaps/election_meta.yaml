@@ -82,7 +82,7 @@ bases:
 
 area_sets:
   original:
-    - GeorgiaTerritories
+    - Georgia Territories
     - Connecticut
     - Delaware
     - Georgia
@@ -178,107 +178,124 @@ area_sets:
 
 areas:
   original:
-    GeorgiaTerritories:
+    Georgia Territories:
       label: Georgia
+      points: 212 423 214 393 196 337 113 343 100 368 99 394 102 406 94 423 93 433
       shape: poly
-      points: 687 447 684 417 667 361 584 367 570 392 570 418 573 430 564 447 564 457
     Connecticut:
       label: Connecticut
+      points: 401 141 374 147 374 168 377 171 400 161 403 156
       shape: poly
-      points: 871 165 873 180 886 176 886 176 877 164
     Delaware:
       label: Delaware
+      points: 347 205 353 202 353 209 364 223 366 231 355 232
       shape: poly
-      points: 818 229 823 226 824 233 834 247 837 255 826 256
     Georgia:
       label: Georgia
+      points: 196 337 214 393 212 423 221 431 278 430 285 421 291 389 246 342 238 339
+        239 332
       shape: poly
-      points: 667 361 684 417 687 447 692 453 748 454 755 445 761 413 716 366 709 363 709 356
     Kentucky:
       label: Kentucky
+      points: 124 309 131 293 151 275 190 259 200 241 239 253 239 262 252 274 229 295
+        150 304 149 307
       shape: poly
-      points: 594 333 602 317 621 299 660 283 671 265 710 277 710 286 722 298 700 319 621 328 620 331
+    Maine:
+      label: Massachussetts
+      points: 413 113 406 108 394 68 406 13 423 13 432 16 440 46 446 46 457 59 431 90
+        416 97
+      shape: poly
     Maryland:
       label: Maryland
+      points: 286 218 347 205 355 232 366 231 365 241 348 246 328 239 331 230 310 216
+        289 229
       shape: poly
-      points: 757 242 818 229 826 256 837 255 835 265 818 270 799 263 802 254 781 240 760 253
     Massachussetts:
       label: Massachussetts
+      points: 373 131 405 124 407 120 411 117 418 134 428 131 436 150 416 152 406 140
+        374 147
       shape: poly
-      points: 844 155 876 148 877 144 882 141 889 158 899 155 907 174 886 176 877 164 844 171
     New Hampshire:
       label: New Hampshire
+      points: 385 128 405 124 407 121 411 117 413 113 406 108 394 68 387 68 388 76 390
+        87 384 94
       shape: poly
-      points: 855 152 876 148 878 145 882 141 883 137 876 132 865 92 858 92 858 100 861 111 855 118
     New Jersey:
       label: New Jersey
+      points: 353 202 353 209 364 223 375 202 375 186 372 171 357 165 352 184 361 193
       shape: poly
-      points: 823 226 824 233 834 247 845 226 846 210 843 195 827 189 822 208 832 217
     New York:
       label: New York
+      points: 273 162 284 150 280 139 320 125 319 110 334 91 361 83 373 131 374 168 377
+        171 400 161 402 167 374 181 372 171 357 165 344 155 275 168
       shape: poly
-      points: 743 186 754 174 750 163 790 149 789 134 805 115 831 107 844 155 844 192 848 195 871 185 872 191 845 205 843 195 827 189 814 179 745 192
     North Carolina:
       label: North Carolina
+      points: 260 292 361 274 376 298 336 340 326 342 300 326 284 328 279 322 255 323
+        239 332 219 333 225 323 259 297
       shape: poly
-      points: 731 316 831 298 847 322 807 364 797 366 771 350 754 352 750 346 726 347 709 356 689 357 695 347 730 321
     Pennsylvania:
       label: Pennsylvania
+      points: 261 171 265 200 270 220 347 205 361 193 352 184 357 165 344 155 275 168
+        273 162
       shape: poly
-      points: 731 195 736 224 741 244 818 229 832 217 822 208 827 189 814 179 745 192 743 186
     Rhode Island:
       label: Rhode Island
+      points: 401 141 403 156 416 152 406 140
       shape: poly
-      points: 871 165 844 171 844 192 848 195 871 185 873 180
     South Carolina:
       label: South Carolina
+      points: 239 332 238 339 246 342 291 389 317 361 320 348 326 343 300 326 284 328
+        279 322 255 323
       shape: poly
-      points: 709 356 709 363 716 366 761 413 788 385 791 372 796 367 771 350 754 352 750 346 726 347
     Tennessee:
       label: Tennessee
+      points: 113 343 124 309 149 307 150 304 260 292 259 297 246 306 225 323 219 333
+        197 337
       shape: poly
-      points: 584 367 594 333 620 331 621 328 731 316 730 321 717 330 695 347 689 357 668 361
     Vermont:
       label: Vermont
+      points: 361 83 388 76 390 87 384 94 385 128 373 131
       shape: poly
-      points: 831 107 858 100 861 111 855 118 855 152 844 155
     Virginias:
       label: Virginia
+      points: 239 253 265 200 270 220 286 218 289 229 310 216 331 230 328 239 348 246
+        365 241 361 274 265 291 229 295 252 274 239 262
       shape: poly
-      points: 710 277 736 224 741 244 757 242 760 253 781 240 801 254 799 263 818 270 835 265 831 298 736 315 700 319 723 298 710 286
 
-    Delaware (rect):
-      label: Delaware
-      shape: rect
-      points: 422 241 500 265
-    Maryland (rect):
-      label: Maryland
-      shape: rect
-      points: 397 265 500 298
-    New Hampshire (rect):
-      label: New Hampshire
-      shape: rect
-      points: 323 13 390 37
-    New Jersey (rect):
-      label: New Jersey
-      shape: rect
-      points: 422 215 500 241
-    Massachusetts (rect):
-      label: Massachusetts
-      shape: rect
-      points: 451 117 539 148
     Connecticut (rect):
       label: Connecticut
+      points: 447 184 516 184 516 208 447 208
+      shape: poly
+    Delaware (rect):
+      label: Delaware
+      points: 422 241 499 241 499 264 422 264
+      shape: poly
+    Maryland (rect):
+      label: Maryland
+      points: 398 264 500 264 500 297 398 297
+      shape: poly
+    Massachusetts (rect):
+      label: Massachusetts
+      points: 452 117 538 117 538 148 452 148
+      shape: poly
+    New Hampshire (rect):
+      label: New Hampshire
+      points: 324 14 390 36
       shape: rect
-      points: 447 183 517 209
-    Vermont (rect):
-      label: Vermont
-      shape: rect
-      points: 311 36 381 63
+    New Jersey (rect):
+      label: New Jersey
+      points: 422 215 499 215 499 241 422 241
+      shape: poly
     Rhode Island (rect):
       label: Rhode Island
+      points: 451 154 517 154 517 180 451 180
+      shape: poly
+    Vermont (rect):
+      label: Vermont
+      points: 311 37 380 63
       shape: rect
-      points: 451 154 517 180
+
   current:
     Alabama:
       label: Alabama
