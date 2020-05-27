@@ -153,7 +153,8 @@ for curmap in mg.maps(args.start, args.end):
 </style>
 """.format(curmap['sizes']['width'], curmap['sizes']['height']))
 
-    outfile = open(os.path.join('gen', curmap['filename']),'w')
+    outfile = open(os.path.join('gen', curmap['filename']),'w', encoding='utf-8')
+    outfile.write('\ufeff') # TODO: This fixes test files, but does it break Wiki?
     outfile.write('<base href="http://en.wikipedia.org">\n')
     outfile.write("""<div class="center">
 <div class="floatnone">
@@ -199,7 +200,12 @@ for curmap in mg.maps(args.start, args.end):
                 adj_pair.append((pair[xy]*base['scale'][xy]+base['offset'][xy]))
             adj_coords.append(adj_pair)
 
-        description = "{year} United States presidential election in {label}".format(label=area['label'], year=curmap['year'])
+        
+        year = curmap['year']
+        if year == "1789":
+            year = "1788–89" # :(
+        print(year)
+        description = "{year} United States presidential election in {label}".format(label=area['label'], year=year)
 
         # Write HTML
         outfile.write(
