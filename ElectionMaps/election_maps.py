@@ -186,6 +186,11 @@ for curmap in mg.maps(args.start, args.end):
             if(int(curmap['year']) < firstyear):
                 for k in keys:
                     area_keys.remove(k)
+    if('removals' in base):
+        for lastyear, keys in base['removals'].items():
+            if(int(curmap['year']) >= lastyear):
+                for k in keys:
+                    area_keys.remove(k)
 
     for area_key in area_keys:
         area = meta['areas'][curmap['base']][area_key]
@@ -204,7 +209,6 @@ for curmap in mg.maps(args.start, args.end):
         year = curmap['year']
         if year == "1789":
             year = "1788–89" # :(
-        print(year)
         description = "{year} United States presidential election in {label}".format(label=area['label'], year=year)
 
         # Write HTML
