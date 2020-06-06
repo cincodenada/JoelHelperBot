@@ -180,17 +180,26 @@ for curmap in mg.maps(args.start, args.end):
         origwiki.write(origtext)
         origwiki.close()
 
-    area_keys = list(meta['area_sets'][curmap['base']])
-    if('additions' in base):
-        for firstyear, keys in base['additions'].items():
-            if(int(curmap['year']) < firstyear):
-                for k in keys:
-                    area_keys.remove(k)
-    if('removals' in base):
-        for lastyear, keys in base['removals'].items():
-            if(int(curmap['year']) >= lastyear):
-                for k in keys:
-                    area_keys.remove(k)
+    to_remove = set()
+    all_years = set()
+    if 'additions' in base:
+        all_years.update(base['additions'].keys())
+        # Pre-remove any states that are added later
+        to_remove.update([add for adds in base['additions'].values() for add in adds])
+    if 'removals' in base:
+        all_years.update(base['removals'].keys())
+        # ...but not states that are removed before being re-added
+        to_remove.difference_update([rem for rems in base['removals'].values() for rem in rems])
+
+    for year in filter(lambda y: y <= int(curmap['year']), sorted(all_years)):
+        if('removals' in base and year in base['removals']):
+            print("Removing {} in {}".format(','.join(base['removals'][year]), year))
+            to_remove.update(base['removals'][year])
+        if('additions' in base and year in base['additions']):
+            print("Adding {} in {}".format(','.join(base['additions'][year]), year))
+            to_remove.difference_update(base['additions'][year])
+
+    area_keys = [a for a in meta['area_sets'][curmap['base']] if a not in to_remove]
 
     for area_key in area_keys:
         area = meta['areas'][curmap['base']][area_key]
