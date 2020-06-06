@@ -65,12 +65,15 @@ bases:
       1860:
         - Oregon
         - Minnesota
+        - New Jersey (wide rect) # split vote
       1864:
-        - Nevada
+        - New Jersey (rect)
+        - Flat Nevada
         - West Virginia
           #- West Virginia (rect)
         - Kansas
       1868:
+        - Nevada
         - Nebraska
         - Arkansas
         - Alabama
@@ -91,7 +94,7 @@ bases:
         - North Dakota
         - South Dakota
         - Montana
-        - New Jersey (10+ EV) (rect)
+        - New Jersey (wide rect)
       1896:
         - Utah
       1908:
@@ -105,12 +108,14 @@ bases:
       1964:
         - District of Columbia
         - District of Columbia (rect)
-        - Maryland (10+ EV) (rect)
+        - Maryland (wide rect)
         - Virginia (with DC)
         - Maryland (with DC)
     removals:
       1852:
         - Bigger Texas
+      1860:
+        - New Jersey (rect)
       1864:
         - Texas
         - Arkansas
@@ -121,6 +126,9 @@ bases:
         - South Carolina
         - North Carolina
         - Virginias
+        - New Jersey (wide rect)
+      1868:
+        - Flat Nevada
       1892:
         - New Jersey (rect)
       1964:
@@ -203,6 +211,7 @@ area_sets:
     - Oregon
     - Washington
     - Idaho
+    - Flat Nevada
     - Nevada
     - Utah
     - Arizona
@@ -257,10 +266,10 @@ area_sets:
 
     - District of Columbia (rect)
     - Maryland (rect)
-    - Maryland (10+ EV) (rect)
+    - Maryland (wide rect)
     - Delaware (rect)
     - New Jersey (rect)
-    - New Jersey (10+ EV) (rect)
+    - New Jersey (wide rect)
     - Connecticut (rect)
     - Rhode Island (rect)
     - Massachusetts (rect)
@@ -759,6 +768,10 @@ areas:
       label: Idaho
       shape: poly
       points: 175 28 188 30 184 48 184 53 186 58 187 59 186 62 186 66 187 68 191 71 193 77 196 83 198 85 199 86 201 86 202 90 195 105 195 109 198 112 202 112 205 109 208 125 214 132 214 138 216 140 218 138 221 138 223 139 227 139 228 138 233 139 235 140 237 140 239 137 241 137 242 141 244 141 235 194 188 186 141 177 152 135 154 131 153 129 150 129 150 125 152 122 155 118 158 117 158 114 164 106 167 103 167 98 163 96 163 83 166 67 170 47
+    Flat Nevada:
+      label: Nevada
+      shape: poly
+      points: 77 230 94 167 140 178 187 187 166 294 115 285
     Nevada:
       label: Nevada
       shape: poly
@@ -972,7 +985,7 @@ areas:
       label: Maryland
       shape: rect
       points: 883 288 955 306
-    Maryland (10+ EV) (rect):
+    Maryland (wide rect):
       label: Maryland
       shape: rect
       points: 883 288 970 306
@@ -984,7 +997,7 @@ areas:
       label: New Jersey
       shape: rect
       points: 899 244 952 261
-    New Jersey (10+ EV) (rect):
+    New Jersey (wide rect):
       label: New Jersey
       shape: rect
       points: 899 244 971 261
