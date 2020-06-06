@@ -182,14 +182,23 @@ for curmap in mg.maps(args.start, args.end):
 
     to_remove = set()
     all_years = set()
+    year_added = {}
     if 'additions' in base:
         all_years.update(base['additions'].keys())
         # Pre-remove any states that are added later
-        to_remove.update([add for adds in base['additions'].values() for add in adds])
+        for year, adds in base['additions'].items():
+            for add in adds:
+                if add not in year_added:
+                    year_added[add] = year
+            to_remove.update(adds)
+    to_unremove = set()
     if 'removals' in base:
         all_years.update(base['removals'].keys())
         # ...but not states that are removed before being re-added
-        to_remove.difference_update([rem for rems in base['removals'].values() for rem in rems])
+        for year, rems in base['removals'].items():
+            to_unremove.update([rem for rem in rems if rem in year_added and year < year_added[rem]])
+
+    to_remove.difference_update(to_unremove)
 
     for year in filter(lambda y: y <= int(curmap['year']), sorted(all_years)):
         if('removals' in base and year in base['removals']):
